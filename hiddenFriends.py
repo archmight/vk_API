@@ -3,19 +3,22 @@ import time
 
 
 
-def id_friends(id,token):
+def id_friends(id,token, limit = 999999999):
 	link = "https://api.vk.com/method/friends.get?user_id={}&access_token={}&v=5.52".format(id,token)
 	request = requests.get(link).json()
 
 	try:
 		friends_list = request ['response']['items']
-		print(friends_list)
-		print(type(friends_list))
+#		print(friends_list)
+#		print(type(friends_list))
 		time.sleep(0.34)
-		return friends_list
+		if(len(friends_list) > limit):
+			return []
+		else:
+			return friends_list
 
 	except KeyError:
-		print(request)
+#		print(request)
 		time.sleep(0.34)
 		return []
 
@@ -68,15 +71,18 @@ def get_hidden_friends(id_friend_list, possible_hidden_friend_list):
 
 def main():
 	big_family = []
-	print("print id to get friends")
+	print("input id to get friends")
 	id = input()
-	print("print token to get request")
+	print("input token to get request")
 	token = input()
+	print("input limit of friends")
+	limit = input()
+	limit = int(limit)
 
 	friend_list = id_friends(id,token)
 
 	for f_id in friend_list:
-		big_family.extend(id_friends(f_id,token))
+		big_family.extend(id_friends(f_id,token,limit))
 
 	print("********************")
 	new_big_family = list(dict.fromkeys(big_family))
